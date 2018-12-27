@@ -37,7 +37,7 @@ gulp.task("gulp-autoreload", () => {
   let p
   const spawnChildren = function spawnChildren() {
     if (p) p.kill()
-    p = spawn("gulp", ["lint-gulpfile", "install", "watch-nogulpfile"], { stdio: "inherit" })
+    p = spawn("./node_modules/.bin/gulp", ["lint-gulpfile", "install", "watch-nogulpfile"], { stdio: "inherit" })
   }
   gulp.watch("gulpfile.js", spawnChildren)
   spawnChildren()
@@ -57,7 +57,7 @@ gulp.task("lint", () =>
     .pipe(eslint())
     .pipe(eslint.format()))
 
-gulp.task("check-priv", () => {
+gulp.task("check-priv", (done) => {
   try {
     fs.statSync("./conf.priv.js")
   } catch (e) {
@@ -65,24 +65,8 @@ gulp.task("check-priv", () => {
     console.log("Creating ./conf.priv.js based on ./conf.priv.example.js")
     fs.copyFileSync("./conf.priv.example.js", "./conf.priv.js", fs.constants.COPYFILE_EXCL)
   }
-})
 
-gulp.task("build", ["check-priv", "clean", "lint", "readme"], () => gulp.src(paths.entry, { read: false })
-  .pipe(parcel())
-  .pipe(rename(".surfingkeys"))
-  .pipe(gulp.dest("build")))
-
-gulp.task("install", ["build"], () => gulp.src("build/.surfingkeys")
-  .pipe(gulp.dest(os.homedir())))
-
-gulp.task("watch", () => {
-  gulp.watch([].concat(paths.scripts, paths.gulpfile), ["readme", "install"])
-  gulp.watch(paths.readme, ["readme"])
-})
-
-gulp.task("watch-nogulpfile", () => {
-  gulp.watch([].concat(paths.scripts), ["readme", "install"])
-  gulp.watch(paths.readme, ["readme"])
+  done()
 })
 
 gulp.task("readme", () => {
@@ -154,4 +138,26 @@ gulp.task("readme", () => {
     .pipe(gulp.dest("."))
 })
 
-gulp.task("default", ["build"])
+gulp.task("build", gulp.series("check-priv", "clean", "lint", "readme"), (done) => {
+  gulp.src(paths.entry, { read: false })
+    .pipe(parcel())
+    .pipe(rename(".surfingkeys"))
+    .pipe(gulp.dest("build"))
+
+  done()
+})
+
+gulp.task("install", gulp.series("build"), () => gulp.src("build/.surfingkeys")
+  .pipe(gulp.dest(os.homedir())))
+
+gulp.task("watch", () => {
+  gulp.watch([].concat(paths.scripts, paths.gulpfile), gulp.series("readme", "install"))
+  gulp.watch(paths.readme, gulp.series("readme"))
+})
+
+gulp.task("watch-nogulpfile", () => {
+  gulp.watch([].concat(paths.scripts), gulp.series("readme", "install"))
+  gulp.watch(paths.readme, gulp.series("readme"))
+})
+
+gulp.task("default", gulp.series("build"))

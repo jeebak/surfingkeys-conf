@@ -93,7 +93,7 @@ Building `surfingkeys-conf` requires a few dependencies to be installed:
 
 4. __Gulp Build/Install__
 	```shell
-	$ gulp install # OR "gulp build" to build to ./build/.surfingkeys without installing
+	$ ./node_modules/.bin/gulp install # OR "./node_modules/.bin/gulp build" to build to ./build/.surfingkeys without installing
 	```
 
 	This will build the final configuration file and place it at `~/.surfingkeys`.
@@ -115,14 +115,14 @@ Building `surfingkeys-conf` requires a few dependencies to be installed:
 		- __Linux__: `file:///home/{USERNAME}/.surfingkeys` (replace `{USERNAME}` with your username) 
 		- __macOS__: `file:///Users/{USERNAME}/.surfingkeys` (replace `{USERNAME}` with your username) 
 		- __Windows__: `file://%Homedrive%%Homepath%/.surfingkeys` (This is a guess, please correct me if I'm wrong)
-	- __IV.__ Hack Away! If you ever make a change to any of your configuration files in the future, simply run `gulp install` again and your new configuration will automatically be loaded by SurfingKeys.
+	- __IV.__ Hack Away! If you ever make a change to any of your configuration files in the future, simply run `./node_modules/.bin/gulp install` again and your new configuration will automatically be loaded by SurfingKeys.
 
 	</details>
 
 	<details>
 	<summary><strong>Option B</strong>: Manually copy/paste into the SurfingKeys configuration form</summary>
 
-	- __I.__ Copy the contents of `./build/.surfingkeys` (or `$HOME/.surfingkeys` if you ran `gulp install`)
+	- __I.__ Copy the contents of `./build/.surfingkeys` (or `$HOME/.surfingkeys` if you ran `./node_modules/.bin/gulp install`)
 
 	- __II.__ Open the SurfingKeys [configuration page](chrome-extension://mffcegbjcdejldmihkogmcnkgbbhioid/pages/options.html)
 
